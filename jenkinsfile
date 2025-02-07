@@ -5,14 +5,16 @@ pipeline {
         NETLIFY_SITE_ID = '238f812f-067a-4820-a538-4ef1c810d844'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
         REACT_APP_VERSION = "1.0.$BUILD_ID"
-        AWS_ACCESS_KEY_ID = ''
-        AWS_SECRET_ACCESS_KEY = ''
 
     }
 
     stages {
 
         stage('AWS') {
+            environment {
+                AWS_S3_BUCKET = 'rt7085'
+            }
+
             agent {
                 docker {
                     image 'amazon/aws-cli'
@@ -24,7 +26,7 @@ pipeline {
                     sh '''
                         aws --version
                         echo "Hello S3!" > index.html
-                        aws s3 cp index.html s3://rt7085/index.html
+                        aws s3 cp index.html s3://$AWS_S3_BUCKET/index.html
                     '''
                     // 
                 }
